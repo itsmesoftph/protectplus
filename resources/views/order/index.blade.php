@@ -75,7 +75,7 @@
                         {{ $orders->links() }}
                 </div>
                 {{-- END OF ROW --}}
-
+                {{-- to receive orders --}}
                 <div class="row mt-4">
 
                     <table class="table table-bordered table-striped">

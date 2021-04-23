@@ -24,7 +24,7 @@
 
                 <div class="row mt-4">
                      <table class="table table-bordered table-striped" style="width: 100%;">
-                            <thead class="thead-inverse bg-navy">
+                            <thead class="thead-inverse">
                                 <tr>
                                     <td colspan="7" class="bg-navy"> TO RELEASE ORDERS </td>
                                 </tr>

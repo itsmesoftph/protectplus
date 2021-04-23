@@ -14,11 +14,6 @@ use RealRashid\SweetAlert\Facades\Alert;
 |
 */
 
-// Route::get('/login',[
-//     'uses'=>'HomeController@Index',
-//     'as'=>'login'
-//     // 'middleware'=> 'guest'
-// ]);
 
 
 Route::get('/home',[

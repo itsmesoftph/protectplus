@@ -24,14 +24,13 @@
 
                 <div class="row mt-4">
                      <table class="table table-bordered table-striped" style="width: 100%;">
-                            <thead class="thead-inverse">
+                            <thead class="thead-inverse bg-gray ">
                                 <tr>
                                     <td colspan="7" class="bg-navy"> TO RELEASE ORDERS </td>
                                 </tr>
                                 <tr>
                                     <th>Date Ordered</th>
                                     <th>Order No.</th>
-                                    {{-- <th>Customer Name</th> --}}
                                     <th>Status</th>
                                     <th>Number of Item(s)</th>
                                     <th>Grand Total</th>

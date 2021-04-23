@@ -29,12 +29,12 @@ Auth::routes();
 // Route::get('/home', 'App\Http\Controllers\HomeController@index')->name('home');
 
 Route::get('/',
-[
-    'uses'=>'HomeController@Index',
-    'as'=>'home',
-    'middleware'=> 'user'
+        [
+            'uses'=>'HomeController@Index',
+            'as'=>'home',
+            'middleware'=> 'user'
 
-]
+        ]
 
 
 );

@@ -287,7 +287,7 @@
    <table class="table table-striped table-bordered mb-4 ">
         <thead>
         <tr class="bg-gray">
-            <td colspan="7">RAW MATERIAL </td>
+            <td colspan="9">RAW MATERIALS </td>
         </tr>
             <tr>
 
@@ -297,7 +297,9 @@
                 <th>Quantity With Specific Gravity (Liters)</th>
                 <th>Scent</th>
                 <th>Water</th>
-                <th class="bg-navy">Total (Liters)</th>
+                <th class="bg-navy">Approximate Output (Liters)</th>
+                <th colspan="">Approximate Number of Products (pcs)</th>
+                <th>Product Capacity (Liters)</th>
             </tr>
         </thead>
         <tbody>
@@ -313,7 +315,19 @@
                 <td>{{$estimate->mat_value_sg}}</td>
                 <td scope="row">{{$estimate->mat_scent}}</td>
                 <td>{{$estimate->mat_water}}</td>
-                <td class="bg-navy">{{$estimate->total_liters}}</td>
+                <td id="total_liters" class="bg-navy">{{$estimate->total_liters}}</td>
+                <td ><span ><h3 id="product_quantity">0</h3></span></td>
+                <td>
+                    <select class="capacity_value" id="capacity_value">
+                            <option value="excluded" selected="selected">Select Product Here</option>
+                            <option value="3.78">3.78L</option>
+                            <option value="3.2">3.2L</option>
+                            <option value="1">1L</option>
+                            <option value=".5">500ml</option>
+                            <option value=".25">250ml</option>
+                            <option value=".1">100ml</option>
+                    </select>
+                </td>
             </tr>
         @endforeach
 
@@ -333,6 +347,8 @@
 
                 <th class="bg-navy">Total Produced Alcohol(Liters)</th>
                 <th>Remaining Alcohol(Liters)</th>
+
+
             </tr>
         </thead>
         <tbody>
@@ -356,7 +372,7 @@
                             {{-- <td>{{ $qty *  $product->product_capacity}}</td> --}}
                         {{-- <td>{{ $product->quantity}}</td> --}}
 
-                            <td>{{$estimate->total_liters * $product->product_capacity}}</td>
+                            <td>{{$product->product_capacity * $product->new_qty}}</td>
                             <td class="bg-navy">{{$estimate->total_liters }}</td>
 
                             <td>{{ $estimate->total_liters - ($product->new_qty * $product->product_capacity)   }}</td>
@@ -388,31 +404,31 @@
             <tr>
                 <td scope="row">{{ $product->product_code}}</td>
                 <td>{{ number_format((float)$product->new_qty, 2, '.', '') }}</td>
-               @switch($product->product_capacity)
-                   @case(3.78)
-                       <td> {{  number_format((float)$product->new_qty/12, 2, '.', '')}}</td>
-                       @break
+                    @switch($product->product_capacity)
+                        @case(3.78)
+                            <td> {{  number_format((float)$product->new_qty/12, 2, '.', '')}}</td>
+                            @break
 
-                    @case(3.2)
-                       <td> {{  number_format((float)$product->new_qty/12, 2, '.', '')}}</td>
-                       @break
+                          @case(3.2)
+                            <td> {{  number_format((float)$product->new_qty/12, 2, '.', '')}}</td>
+                            @break
 
-                     @case(.25)
-                       <td> {{  number_format((float)$product->new_qty/60, 2, '.', '')}}</td>
-                       @break
+                          @case(.25)
+                            <td> {{  number_format((float)$product->new_qty/60, 2, '.', '')}}</td>
+                            @break
 
-                   @case(.1)
-                       <td> {{  number_format((float)$product->new_qty/63, 2, '.', '')}}</td>
-                       @break
+                        @case(.1)
+                            <td> {{  number_format((float)$product->new_qty/63, 2, '.', '')}}</td>
+                            @break
 
-                    @case(.5)
-                       <td> {{  number_format((float)$product->new_qty/36, 2, '.', '')}}</td>
-                       @break
+                          @case(.5)
+                            <td> {{  number_format((float)$product->new_qty/36, 2, '.', '')}}</td>
+                            @break
 
 
-                   @default
+                        @default
 
-               @endswitch
+                    @endswitch
 
                 <td>{{ number_format((float)$product->new_qty, 2, '.', '') }}</td>
                 <td>{{ number_format((float)$product->new_qty, 2, '.', '') }}</td>
@@ -602,6 +618,18 @@
 
 
 
+                $(".capacity_value").change(function() {
+                    //var $tr = $(this).closest("tr");
+                    //$tr.find("td:eq(7) span").css("color", "blue").text(this.value);
+
+                    // Those are columns 5 and 6
+                      var total_litters = $(this).parent().parent().find("#total_liters").text();
+
+
+                      document.getElementById('product_quantity').firstChild.data = Number(total_litters = $(this).parent().parent().find("#total_liters").text() / this.value).toFixed(0);
+                      //alert(nomePessoa);
+
+                });
 
 
         });

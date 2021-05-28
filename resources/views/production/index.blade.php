@@ -16,7 +16,7 @@
                     <table class="table table-striped table-bordered mb-4 ">
                         <thead>
                         <tr class="bg-gray">
-                            <td colspan="6">RAW MATERIAL ESTIMATES</td>
+                            <td colspan="7">RAW MATERIAL ESTIMATES</td>
                         </tr>
                             <tr>
 
@@ -26,6 +26,7 @@
                                 <th>Quantity With Specific Gravity (Liters)</th>
                                 <th>Scent</th>
                                 <th>Water</th>
+                                <th>Remaining Material (Liters)</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -41,6 +42,7 @@
                                 <td>{{$estimate->mat_value_sg}}</td>
                                 <td scope="row">{{$estimate->mat_scent}}</td>
                                 <td>{{$estimate->mat_water}}</td>
+                                <td>{{ $estimate->cur_val}}</td>
                             </tr>
                               @endforeach
 
@@ -71,6 +73,7 @@
                                 </tr>
                                 <tr>
                                     <th class="align-middle" >Name</th>
+                                    <th class="align-middle" >Product Code</th>
                                     <th class="align-middle" >Description</th>
                                     <th class="align-middle"> Available</th>
                                     <th class="align-middle" >Image</th>
@@ -84,6 +87,7 @@
 
                                     <tr>
                                         <td scope="row" class="align-middle">{{ $product->name }}</td>
+                                         <td scope="row" class="align-middle">{{ $product->product_code }}</td>
                                         <td scope="row" class="align-middle">{{ $product->description }}</td>
 
                                         <td class="align-middle">{{ $product->quantity }}</td>
@@ -92,11 +96,14 @@
                                          {{-- return $fmt->formatCurrency($value, 'PHP'); --}}
                                         <td class="align-middle">{{ $fmt->formatCurrency($product->price,'PHP') }}</td>
                                         <td class="align-middle">
+                                        @php
 
+                                            $pc_code = Str::substr($product->product_code , 0,1);
+                                        @endphp
                                              <form action="{{ route('quantity.update', $product->id) }}">
-                                                <input name="quantity" id="quantity" type="number" style="width: 50px;" class="mb-2">
+                                                <input name="quantity" id="quantity" type="number" style="width: 100px;" class="mb-2">
                                                 <input class="btn btn-primary" type="submit" value="save">
-
+                                                <input type="hidden" name="product_type" value="{{$pc_code}}">
                                             </form>
 
                                         </td>

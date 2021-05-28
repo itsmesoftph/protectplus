@@ -14,19 +14,32 @@ class CartController extends Controller{
 
 
     public function add(Product $product){
-        // dd($product);
+    if($product->is_sale == 'yes'){
+        \Cart::session(auth()->id())->add(array(
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->price - ($product->price * $product->discount_rate /100)  ,
+            'quantity' => 1,
+            'qty' => $product->quantity,
+            'attributes' => array(),
+            'associatedModel' => $product
+
+        ));
+    } else {
+        \Cart::session(auth()->id())->add(array(
+            'id' => $product->id,
+            'name' => $product->name,
+            'price' => $product->price,
+            'quantity' => 1,
+            'qty' => $product->quantity,
+            'attributes' => array(),
+            'associatedModel' => $product
+
+        ));
+    }
 
         // add the product to cart
-    \Cart::session(auth()->id())->add(array(
-        'id' => $product->id,
-        'name' => $product->name,
-        'price' => $product->price,
-        'quantity' => 1,
-        'qty' => $product->quantity,
-        'attributes' => array(),
-        'associatedModel' => $product
 
-    ));
 
     // dd($product->quantity);
 
@@ -41,7 +54,8 @@ class CartController extends Controller{
         // dd(\Cart::session(auth()->id()));
 
             $cartItems = \Cart::session(auth()->id())->getContent();
-            return view( 'cart.index', ['cartItems'=> $cartItems]);
+            // dd($cartItems);
+            return view( 'cart.cart', ['cartItems'=> $cartItems]);
 
     }
 
@@ -94,7 +108,7 @@ class CartController extends Controller{
         ->where('id',Auth()->id())
         ->get();
         // dd($user);
-        return view('cart.checkout',['user'=>$user, 'cartItems'=>$cartItems]);
+        return view('cart.cart_checkout',['user'=>$user, 'cartItems'=>$cartItems]);
     }
 
 }

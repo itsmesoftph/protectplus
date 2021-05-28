@@ -33,60 +33,18 @@ class User
         return redirect()->route('login');
     }
 
-    // admin role
-    if(Auth::user()->role->name == 'Admin'){
-        // return redirect()->route('login');
-        return back();
 
-    }
-
-    //  user role
+    // sales role
     if(Auth::user()->role->name == 'User'){
         return $next($request);
 
-    }
 
-    // sales role
-    if(Auth::user()->role->name == 'Sales'){
-        return back();
-
-    }
-
-    //  DR role
-    if(Auth::user()->role->name == 'DR'){
-        // return redirect()->route('login');
-        return back();
-
-
-    }
-
-    // Releasing role
-    if(Auth::user()->role->name == 'Releasing'){
-        // return redirect()->route('login');
-        return back();
-
-
-    }
-
-    // Payment role
-   if(Auth::user()->role->name == 'Payment'){
-        // return redirect()->route('login');
-        return back();
-
-
-    }
-
-    // Supervisor role
-    if(Auth::user()->role->name == 'Supervisor'){
-        // return redirect()->route('login');
-        return back();
-
-
-    }
-    // Production role
-    if(Auth::user()->role->name == 'Production'){
-        // return redirect()->route('login');
+    } else {
         return back();
     }
+
+
+
+
     }
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Estimate;
 use DB;
 
+use Carbon\Carbon;
 use App\Product;
 use App\Inventory;
 use App\ProductCode;
@@ -16,6 +17,9 @@ use function PHPUnit\Framework\isEmpty;
 class InventoryController extends Controller
 {
     public function index(){
+         //  FORMAT CURRENT DATE
+         $date = Carbon::now();
+         $date->toDateTimeString();
          // GET ALL PRODUCTS
          $products = DB::table('products')
          ->paginate(15);
@@ -24,7 +28,21 @@ class InventoryController extends Controller
          $estimates = DB::table('estimates')
          ->get();
 
-         return view('production.index',['products'=>$products, 'estimates'=>$estimates]);
+         $isoEstimates = Estimate::where('mat_name','=','Iso')
+         ->whereDate('created_at','=',$date)
+         ->get();
+
+         $ethylEstimates = Estimate::where('mat_name','=','Ethyl')
+         ->whereDate('created_at','=',$date)
+         ->get();
+        // $ethylEstimates = DB::table('estimates')
+        // ->where('mat_name','Ethyl')
+        // ->whereDate('created_at',$date)
+        // ->get();
+
+        // dd($ethylEstimates);
+
+         return view('production.index',['products'=>$products, 'isoEstimates'=>$isoEstimates, 'ethylEstimates'=> $ethylEstimates]);
     }
 
     public function getUpdate(Request $request, $id){
@@ -214,6 +232,7 @@ class InventoryController extends Controller
                         'mat_scent' => $request->input('scent_computed'),
                         'mat_water' => $request->input('water_computed'),
                         'total_liters' => $totalLiters,
+                        'cur_val' => $totalLiters,
                     ]);
 
             return redirect(route('inventory'));
@@ -229,33 +248,126 @@ class InventoryController extends Controller
 
     public function quantityUpdate(Request $request, $id){
 
-        if($request->input('quantity') <= 0){
-            return back()->with('toast_error','Invalid input: cannot be zero or less than 0 ');
+
+         //  FORMAT CURRENT DATE
+         $date = Carbon::now();
+         $date->toDateTimeString();
+
+        // dd($iso_quantity[0]);
+        $ethyl_quantity = DB::table('estimates')
+        ->select("total_liters")
+        ->where('mat_name','ethyl')
+        ->whereDate('created_at', $date)
+        ->get();
+
+        $request_product = $request->quantity * $request->capacity;
+
+        // dd($request_product);
+
+        if($request->product_type == 'I'){
+            $iso_quantity = Estimate::where('mat_name','=','Iso')
+            ->whereDate('created_at','=', $date)
+            ->get(['id','total_liters']);
+
+            // dd(gettype($iso_quantity));
+
+
+
+            if($iso_quantity->isEmpty()){
+
+                // IF NO AVAILABLE ISO IN PRODUCTION
+                return back()->with('toast_error','No available Isopropyl in production');
+            } else {
+                // ISO IS AVAILABLE
+                // NUMBER OF PRODUCED MATERIAL TO BE TRANSFERRED TO SHOP
+                // if requested quantity is less than the produced material then proceed
+                if($request_product <= $iso_quantity[0]->total_liters && $request_product > 0 ){
+
+                        // SAVE NEW VALUE FOR THE INVENTORY
+                        $new_val = Estimate::find($iso_quantity[0]->id);
+                        $cur_val = $new_val->cur_val - $request_product;
+                        // dd($cur_val );
+                        $new_val->cur_val = $cur_val;
+                        $new_val->deducted_val = $request_product;
+                        $new_val->save();
+
+                        // UPDATE PRODUCT QUANTITY
+
+                        $qty = Product::find($id);
+                        $quantity = $request->input('quantity') + $qty->quantity;
+                        if($qty){
+
+                            $qty->quantity = ($qty->quantity + $request->input('quantity'));
+                            $qty->save();
+                        }
+
+                        //UPDATE INVENTORY AUDIT TRAIL
+                        Inventory::create([
+                            'product_id' => $qty->id,
+                            'user_id' => Auth::user()->id,
+                            'cur_qty' => $quantity,
+                            'new_qty' => $request->input('quantity')
+                        ]);
+
+                        return back()->with('toast_success','Product was succefully updated');
+
+                }else{
+                    return back()->with('toast_error','Review your input, should not be zero, less than zero or greater than the available material');
+                }
+            }
+
+
+
+        }else{
+            $ethyl_quantity = Estimate::where('mat_name','=','Ethyl')
+            ->whereDate('created_at','=', $date)
+            ->get(['id','total_liters']);
+            // dd($ethyl_quantity);
+            if($ethyl_quantity->isEmpty()){
+                return back()->with('toast_error','No available Ethyl in production');
+            } else {
+                // ETHYL IS AVAILABLE
+                // NUMBER OF PRODUCED MATERIAL TO BE TRANSFERRED TO SHOP
+                // if requested quantity is less than the produced material then proceed
+                if($request_product <= $ethyl_quantity[0]->total_liters && $request_product > 0 ){
+
+                        // SAVE NEW VALUE FOR THE INVENTORY
+                        $new_val = Estimate::find($ethyl_quantity[0]->id);
+
+                        $new_val->cur_val = $new_val->cur_val - $request_product;
+                        $new_val->deducted_val = $request_product;
+                        $new_val->save();
+
+                        // UPDATE PRODUCT QUANTITY
+
+                        $qty = Product::find($id);
+                        $quantity = $request->input('quantity') + $qty->quantity;
+                        if($qty){
+
+                            $qty->quantity = ($qty->quantity + $request->input('quantity'));
+                            $qty->save();
+                        }
+
+                        //UPDATE INVENTORY AUDIT TRAIL
+                        Inventory::create([
+                            'product_id' => $qty->id,
+                            'user_id' => Auth::user()->id,
+                            'cur_qty' => $quantity,
+                            'new_qty' => $request->input('quantity')
+                        ]);
+                        return back()->with('toast_success','Product was succefully updated');
+
+                }else{
+                    return back()->with('toast_error','Review your input, should not be zero, less than zero or greater than the available material');
+                }
+            }
         }
 
-
-        $qty = Product::find($id);
-        $quantity = $request->input('quantity') + $qty->quantity;
-        if($qty){
-
-            $qty->quantity = ($qty->quantity + $request->input('quantity'));
-            $qty->save();
-        }
-
-
-
-        Inventory::create([
-            'product_id' => $qty->id,
-            'user_id' => Auth::user()->id,
-            'cur_qty' => $quantity,
-            'new_qty' => $request->input('quantity')
-        ]);
-
-
-        return redirect()->route('inventory');
 
 
     }
+
+
 
 
 // PRODUCT CODE GENERATION

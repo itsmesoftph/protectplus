@@ -12,46 +12,73 @@
     <link rel="icon" type="image/png" href="{{asset('storage/'.setting('site.logo'))}}">
 
     <!-- Fonts -->
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    {{-- <link rel="dns-prefetch" href="//fonts.gstatic.com">
 
-    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet"> --}}
+
+
+      <!-- GOOGLE WEB FONT -->
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,900&display=swap" rel="stylesheet">
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 
-    <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css">
 
+
+    <!-- BASE CSS -->
+     {{-- <link href="{{URL::asset('css/bootstrap.custom.min.css')}}" rel="stylesheet">
+    <link href="{{URL::asset('css/style.css')}}" rel="stylesheet"> --}}
+
+    {{-- <link href="{{URL::asset('css/style.css')}}" rel="stylesheet"> --}}
+
+
+
+    {{-- <link rel="stylesheet" href="//cdn.datatables.net/1.10.7/css/jquery.dataTables.min.css"> --}}
     {{-- <link rel="stylesheet" type="text/css" media="screen"
      href="http://tarruda.github.com/bootstrap-datetimepicker/assets/css/bootstrap-datetimepicker.min.css"> --}}
 
-      <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
-    <link rel="stylesheet" type="text/css" href="{{ URL::to('css/custom.css') }}">
+
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.css" />
+
+
     <!-- Styles -->
     <link rel="stylesheet" media="screen" href="{{ asset('css/app.css') }}" >
     <link rel="stylesheet" media="print" href="{{ asset('css/print_media.css') }}" >
+
+     <link rel="stylesheet" type="text/css" href="{{asset('css/custom.css') }}">
+{{--
+
+    <link rel="stylesheet" href="{{asset('ecome/css/owl.carousel.min.css')}}">
+    <link rel="shortcut icon" href="{{asset('ecome/img/favicon.png')}}" type="image/png">
+    <link rel="stylesheet" href="{{asset('ecome/css/slick.css')}}">
+    <link rel="stylesheet" href="{{asset('ecome/css/slick-theme.css')}}">
+    <link rel="stylesheet" href="{{asset('ecome/css/owl.theme.default.min.css')}}">
+    <link rel="stylesheet" type="text/css" href="{{asset('ecome/css/style_ecome.css')}}"> --}}
+
+
 </head>
 <body>
     <div id="app">
         <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm  navbar-fixed-top no-print">
             <div class="container">
-            @if(Auth::user() != null)
-                     @if(Auth::user()['name'] == 'user' || Auth::user()['name'] == '' || Auth::user()['name'] == null)
-                        <a class="navbar-brand" href="{{ route('home') }}">
-                        <img src="{{asset('storage/'.setting('site.logo'))}}" alt="protect+" width="30" height="30">
-                            {{ config('app.name', 'ProtectPlus+') }}
-                        </a>
-                    @else
-                        <a class="navbar-brand" href="#">
+                @if(Auth::user() != null)
+                        @if(Auth::user()['name'] == 'user' || Auth::user()['name'] == '' || Auth::user()['name'] == null)
+                            <a class="navbar-brand" href="{{ route('home') }}">
                             <img src="{{asset('storage/'.setting('site.logo'))}}" alt="protect+" width="30" height="30">
-                            {{ config('app.name', 'ProtectPlus+') }}
-                        </a>
-                    @endif
-            @else
-             <a class="navbar-brand" href="{{ route('home') }}">
-                <img src="{{asset('storage/'.setting('site.logo'))}}" alt="protect+" width="30" height="30">
-                            {{ config('app.name', 'ProtectPlus+') }}
-            </a>
-            @endif
+                                {{ config('app.name', 'ProtectPlus+') }}
+                            </a>
+                        @else
+                            <a class="navbar-brand" href="#">
+                                <img src="{{asset('storage/'.setting('site.logo'))}}" alt="protect+" width="30" height="30">
+                                {{ config('app.name', 'ProtectPlus+') }}
+                            </a>
+                        @endif
+                @else
+                <a class="navbar-brand" href="{{ route('home') }}">
+                    <img src="{{asset('storage/'.setting('site.logo'))}}" alt="protect+" width="30" height="30">
+                                {{ config('app.name', 'ProtectPlus+') }}
+                </a>
+                @endif
 
 
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
@@ -174,7 +201,7 @@
                             @endif
                             <li class="nav-item" >
 
-                                <a class="nav-link " href="{{ route('cart.index') }}" style="display:none;">
+                                <a class="nav-link " href="{{ route('walkin.index') }}" style="display:none;">
                                     <i class="fas fa-shopping-cart text-info"></i>
                                     Cart
 
@@ -189,57 +216,15 @@
                             </li>
                          @endif
                     @endif
-                    {{-- <li class="nav-item" style="">
 
-                        <a class="nav-link " href="{{ route('cart.index') }}">
-                            <i class="fas fa-shopping-cart text-info"></i>
-                            Cart
-
-                        <div class="badge badge-danger">
-                        @auth
-                            {{ Cart::session(auth()->id())->getContent()->count() }}
-                            @else
-                            0
-                        @endauth
-                        </div>
-                        </a>
-                    </li>
-                    @endif --}}
-
-{{--
-                        <li class="nav-item">
-
-                            <a class="nav-link " href="{{ route('cart.index') }}">
-                                <i class="fas fa-shopping-cart text-info"></i>
-                                Cart
-
-                               <div class="badge badge-danger">
-                               @auth
-                                {{ Cart::session(auth()->id())->getContent()->count() }}
-                                @else
-                                0
-                               @endauth
-                               </div>
-                            </a>
-                         </li>
-
-                    @endif --}}
-
-
-                        <!-- Authentication Links -->
                         @guest
                             <li class="nav-item">
                                 <a class="nav-link" href="{{ route('login') }}">{{ __('Login') }}</a>
                             </li>
 
 
-                            {{-- registration code --}}
-                            {{-- @if (Route::has('register'))
-                                <li class="nav-item">
-                                    <a class="nav-link" href="{{ route('register') }}">{{ __('Register') }}</a>
-                                </li>
-                            @endif --}}
                         @else
+
                             <li class="nav-item dropdown">
                                 <a id="navbarDropdown" class="nav-link dropdown-toggle" href="#" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" v-pre>
                                     {{ Auth::user()->name }}
@@ -276,6 +261,9 @@
                                                 <a class="dropdown-item" href="{{ route('sales') }}">
                                                     Order Listing
                                                 </a>
+                                                  <a class="dropdown-item" href="{{ route('sales.promo') }}">
+                                                    Promo Settings
+                                                </a>
                                              @break
 
                                              @case(Auth::user()['role_id'] === 4)
@@ -302,6 +290,26 @@
                                                 </a>
 
                                              @break
+
+
+                                              @case(Auth::user()['role_id'] === 8)
+                                              <a class="dropdown-item" href="{{ route('overview')}}">
+                                                   Dashboard
+                                                </a>
+                                              <a class="dropdown-item" href="{{ route('production')}}">
+                                                  Prod. Estimates
+                                                </a>
+
+                                                <a class="dropdown-item" href="{{ route('sales_summary') }}">
+                                                  Sales Summary
+                                                </a>
+
+                                                <a class="dropdown-item" href="{{ route('estimator') }}">
+                                                  Estimator
+                                                </a>
+
+                                             @break
+
 
                                             @default
 
@@ -342,9 +350,14 @@
         <main class="py-4 container">
             @yield('content')
         </main>
-    </div>
 
+
+    </div>
     <script src="{{ asset('js/app.js') }}" ></script>
+
+
+    <script src="{{ asset('js/sweetalert.all.js') }}" ></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
     <script type="text/javascript" src="{{ asset('js/jquery.printPage.js') }}"></script>
 
@@ -353,13 +366,21 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> --}}
     {{-- <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> --}}
-    {{-- <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script> --}}
+    <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script>
     {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> --}}
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script> --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script> --}}
+    {{-- <script src="https://cdn.datatables.net/datetime/1.0.3/js/dataTables.dateTime.min.js"></script> --}}
+    {{-- <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script> --}}
+    {{-- <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script> --}}
+    {{-- <script src="{{asset(js/common_scripts.min.js)}}"></script>
+    <script src="{{asset(js/main.js)}}"></script> --}}
+    {{-- <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script> --}}
+    {{-- <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script> --}}
 
-     {{-- <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.1.min.js"></script> --}}
-   {{-- <script type="text/javascript" charset="utf8" src="http://ajax.aspnetcdn.com/ajax/jquery.dataTables/1.9.0/jquery.dataTables.min.js"></script> --}}
+    {{-- <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> --}}
+    {{-- <script src="https://cdn.datatables.net/1.10.24/js/dataTables.bootstrap4.min.js"></script> --}}
 
     @yield('javascripts')
     <script>
@@ -369,6 +390,10 @@
         });
 
     </script>
+    <!-- COMMON SCRIPTS -->
+
+
      @include('sweetalert::alert')
+
 </body>
 </html>

@@ -28,67 +28,17 @@ class Production
         // Role 7 - payment
         // Role 8 - supervisor
 
-
         if(!Auth::check()){
             return redirect()->route('login');
         }
 
-        // admin role
-        if(Auth::user()->role->name == 'Admin'){
-            // return redirect()->route('login');
-            return back();
+        // PRODUCTION role
+        if(Auth::user()->role->name == 'Production'){
+             return $next($request);
 
-        }
+        } else {
+            return redirect()->back();
 
-        //  user role
-        if(Auth::user()->role->name == 'User'){
-            return redirect()->route('login');
-        }
-
-        // sales role
-        if(Auth::user()->role->name == 'Sales'){
-            return back();
-
-
-        }
-
-        //  DR role
-        if(Auth::user()->role->name == 'DR'){
-            // return redirect()->route('login');
-            return back();
-
-
-        }
-
-        // Releasing role
-        if(Auth::user()->role->name == 'Releasing'){
-            // return redirect()->route('login');
-            return back();
-
-
-
-
-        }
-
-        // Payment role
-        if(Auth::user()->role->name == 'Payment'){
-            // return redirect()->route('login');
-            return back();
-
-
-
-        }
-
-        // Supervisor role
-        if(Auth::user()->role->name == 'Supervisor'){
-            // return redirect()->route('login');
-            return back();
-        }
-
-         // Production role
-         if(Auth::user()->role->name == 'Production'){
-            // return redirect()->route('login');
-            return $next($request);
         }
     }
 }

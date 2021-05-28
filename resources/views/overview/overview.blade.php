@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.admin')
 
 @section('styles')
     {{-- <link rel="stylesheet" href="https://cdn.datatables.net/1.10.12/css/dataTables.bootstrap.min.css" /> --}}
@@ -6,11 +6,26 @@
 @endsection
 
 @section('content')
-<div class="container">
+<ol class="breadcrumb mt-4">
+        {{-- <li class="breadcrumb-item "  aria-current="page"><a href="{{ route('inventory') }}">Dashboard</a></li> --}}
+        <li class="breadcrumb-item active" aria-current="page">Dashboard</li>
+
+    </ol>
+<div class="container table-repsonsive">
  @php
     $fmt = new NumberFormatter( 'en_PHP', NumberFormatter::CURRENCY );
 @endphp
-     <div class="row">
+
+
+<div class="card">
+
+    <div class="card-header bg-navy">
+        DASHBOARD OVERVIEW
+
+    </div>
+
+    <div class="card-body">
+             <div class="row">
         <div class="col-md-2">
           <!-- small box -->
           <div class="small-box bg-green">
@@ -280,274 +295,24 @@
     </div>
   {{-- end 3rd row --}}
 
-
-<div class="row">
-
-  <div class="col">
-   <table class="table table-striped table-bordered mb-4 ">
-        <thead>
-        <tr class="bg-gray">
-            <td colspan="9">RAW MATERIALS </td>
-        </tr>
-            <tr>
-
-                <th>Name</th>
-                <th>Date</th>
-                <th>Quantity (Liters)</th>
-                <th>Quantity With Specific Gravity (Liters)</th>
-                <th>Scent</th>
-                <th>Water</th>
-                <th class="bg-navy">Approximate Output (Liters)</th>
-                <th colspan="">Approximate Number of Products (pcs)</th>
-                <th>Product Capacity (Liters)</th>
-            </tr>
-        </thead>
-        <tbody>
-        @foreach ( $estimates as $estimate )
-                @php
-                    $createdAt = strtotime($estimate->created_at)
-                @endphp
-
-            <tr>
-                <td scope="row">{{$estimate->mat_name}}</td>
-                <td>{{date('m-d-y', $createdAt)}}</td>
-                <td>{{$estimate->mat_value}}</td>
-                <td>{{$estimate->mat_value_sg}}</td>
-                <td scope="row">{{$estimate->mat_scent}}</td>
-                <td>{{$estimate->mat_water}}</td>
-                <td id="total_liters" class="bg-navy">{{$estimate->total_liters}}</td>
-                <td ><span ><h3 id="product_quantity">0</h3></span></td>
-                <td>
-                    <select class="capacity_value" id="capacity_value">
-                            <option value="excluded" selected="selected">Select Product Here</option>
-                            <option value="3.78">3.78L</option>
-                            <option value="3.2">3.2L</option>
-                            <option value="1">1L</option>
-                            <option value=".5">500ml</option>
-                            <option value=".25">250ml</option>
-                            <option value=".1">100ml</option>
-                    </select>
-                </td>
-            </tr>
-        @endforeach
-
-
-        </tbody>
-    </table>
-    <table class="table table-bordered mb-4">
-        <thead>
-            <tr>
-                <td colspan="7" class="bg-gray">PRODUCTION ESTIMATES</td>
-            </tr>
-            <tr>
-                <th>Product Code</th>
-                <th >Product Size (Liters)</th>
-                <th>Production Quantity (pcs)</th>
-                <th>Production Quantity (Liters)</th>
-
-                <th class="bg-navy">Total Produced Alcohol(Liters)</th>
-                <th>Remaining Alcohol(Liters)</th>
-
-
-            </tr>
-        </thead>
-        <tbody>
-
-                            {{-- {{$qty = $inv->new_qty}} --}}
-
-
-
-
-
-            @foreach ($invQuantity as $product )
-                {{-- @foreach ( $invQuantity as $invQty ) --}}
-                    <tr>
-                        <td>{{ $product->product_code}}</td>
-                        <td>{{ $product->product_capacity}}</td>
-                        <td>{{ $product->new_qty }}</td>
-
-                            {{-- <td>{{ $product->inventories['new_qty']}}</td> --}}
-
-
-                            {{-- <td>{{ $qty *  $product->product_capacity}}</td> --}}
-                        {{-- <td>{{ $product->quantity}}</td> --}}
-
-                            <td>{{$product->product_capacity * $product->new_qty}}</td>
-                            <td class="bg-navy">{{$estimate->total_liters }}</td>
-
-                            <td>{{ $estimate->total_liters - ($product->new_qty * $product->product_capacity)   }}</td>
-
-                    </tr>
-                  {{-- @endforeach --}}
-              @endforeach
-        </tbody>
-    </table>
-
-
-
-    <table class="table table-bordered">
-        <thead>
-            <tr>
-                <td colspan="5" class="bg-gray">PRODUCTION ESTIMATES</td>
-            </tr>
-            <tr>
-                <th>Product Code</th>
-                <th>Production Quantity (pcs)</th>
-                <th>Number Of Boxes</th>
-                <th>Number Of Seal</th>
-                <th>Number Of Sticker</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach ($invQuantity as $product )
-
-            <tr>
-                <td scope="row">{{ $product->product_code}}</td>
-                <td>{{ number_format((float)$product->new_qty, 2, '.', '') }}</td>
-                    @switch($product->product_capacity)
-                        @case(3.78)
-                            <td> {{  number_format((float)$product->new_qty/12, 2, '.', '')}}</td>
-                            @break
-
-                          @case(3.2)
-                            <td> {{  number_format((float)$product->new_qty/12, 2, '.', '')}}</td>
-                            @break
-
-                          @case(.25)
-                            <td> {{  number_format((float)$product->new_qty/60, 2, '.', '')}}</td>
-                            @break
-
-                        @case(.1)
-                            <td> {{  number_format((float)$product->new_qty/63, 2, '.', '')}}</td>
-                            @break
-
-                          @case(.5)
-                            <td> {{  number_format((float)$product->new_qty/36, 2, '.', '')}}</td>
-                            @break
-
-
-                        @default
-
-                    @endswitch
-
-                <td>{{ number_format((float)$product->new_qty, 2, '.', '') }}</td>
-                <td>{{ number_format((float)$product->new_qty, 2, '.', '') }}</td>
-            </tr>
-            @endforeach
-
-        </tbody>
-    </table>
-
-
-
-    {{-- TABLE INVENTORY --}}
-    <table class="table table-bordered table-striped">
-      <thead>
-        <tr>
-          <td colspan="4" class="bg-navy"> :: PRODUCT INVENTORY DETAILS </td>
-        </tr>
-        <tr>
-          <th class="align-middle" >Product Name</th>
-          <th class="align-middle">Product Description</th>
-          <th class="align-middle">Image</th>
-          <th class="align-middle">Product Quantity</th>
-      </tr>
-      </thead>
-      <tbody>
-      @foreach ( $products as $item )
-
-        <tr>
-          <td scope="row">{{ $item->name }}</td>
-          <td>{{ $item->description }}</td>
-          <td>
-              <img class="card-img-top" src="{{asset('storage/'.$item->img_url)}}" alt="Card image cap" style="width:100px; height:100px;">
-          </td>
-          <td>{{ $item->quantity }}</td>
-        </tr>
-      @endforeach
-
-      </tbody>
-    </table>
-    {{ $products->links() }}
-    {{-- END OF TABLE INVENTORY --}}
-
-
-
-
-
-
-  </div>
-
-</div>
-
-
-
-
-<hr>
-<div class="row">
-  <div class="col">
-      <div class="card" Style="width:100%;">
-        <div class="card-header bg-navy">
-
-         :: DATE COVERED
-        </div>
-        <div class="card-body row input-daterange ">
-            <div class="col-md-4">
-              <input type="text" name="from_date" id="from_date" class="btn-dtpicker form-control btn btn-primary" placeholder="From" style="color: #001f3f;" readonly />
-            </div>
-            <div class="col-md-4 text-center">
-                <input type="text" name="to_date" id="to_date" class="btn-dtpicker form-control btn btn-primary" placeholder="To"  style="color: #001f3f;" readonly />
-            </div>
-            <div class="col">
-                <button type="button" name="filter" id="filter" class=" btn btn-block btn-primary mr-5">Go</button>
-
-            </div>
-            <div class="col">
-              <button type="button" name="refresh" id="refresh" class=" btn btn-block btn-success">Refresh</button>
-            </div>
-        </div>
-
     </div>
-  </div>
 </div>
 
-<hr>
 
-  <div class="table-responsive mt-5">
-    <table class="table table-bordered table-striped table-fixed" id="order_table">
-           <thead>
-            <tr>
-                <th>Order Number</th>
-                <th>Customer Name</th>
-                <th>Number of Item</th>
-                <th>Is Paid</th>
-                {{-- {{$orders}} --}}
-
-                <th>Total</th>
-                <th>Date Ordered</th>
-            </tr>
-           </thead>
-           <tbody></tbody>
-
-
-
-       </table>
-       {{csrf_field()}}
-   </div>
   @endsection
 
   @section('javascripts')
-     <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script> --}}
 
-    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    {{-- <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script> --}}
     {{-- <script src=" https://code.jquery.com/jquery-3.5.1.js"></script> --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
+    {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script> --}}
     {{-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script> --}}
     {{-- <script src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> --}}
     {{-- <script src="https://cdn.datatables.net/1.10.12/js/dataTables.bootstrap.min.js"></script> --}}
     {{-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> --}}
     {{-- <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.js"></script> --}}
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/js/bootstrap-datepicker.min.js" integrity="sha512-T/tUfKSV1bihCnd+MxKD0Hm1uBBroVYBOYSk1knyvQ9VyZJpc/ALb4P0r6ubwVPSGB2GvjeoMAJJImBG12TiaQ==" crossorigin="anonymous"></script>
+
 
     <script>
 
@@ -618,15 +383,29 @@
 
 
 
+                $(".ethyl_capacity_value").change(function() {
+                    //var $tr = $(this).closest("tr");
+                    //$tr.find("td:eq(7) span").css("color", "blue").text(this.value);
+
+                    // Those are columns 5 and 6
+                      var total_liters = $(this).parent().parent().find("#ethyl_total_liters").text();
+
+
+                      document.getElementById('ethyl_product_quantity').firstChild.data = Number(total_liters / this.value).toFixed(0);
+                      //alert(nomePessoa);
+
+                });
+
+
                 $(".capacity_value").change(function() {
                     //var $tr = $(this).closest("tr");
                     //$tr.find("td:eq(7) span").css("color", "blue").text(this.value);
 
                     // Those are columns 5 and 6
-                      var total_litters = $(this).parent().parent().find("#total_liters").text();
+                      var total_liters = $(this).parent().parent().find("#total_liters").text();
 
 
-                      document.getElementById('product_quantity').firstChild.data = Number(total_litters = $(this).parent().parent().find("#total_liters").text() / this.value).toFixed(0);
+                      document.getElementById('product_quantity').firstChild.data = Number(total_liters / this.value).toFixed(0);
                       //alert(nomePessoa);
 
                 });

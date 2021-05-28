@@ -75,6 +75,7 @@ class Kernel extends HttpKernel
         'distro' => \App\Http\Middleware\Distro::class,
         'supervisor' => \App\Http\Middleware\Supervisor::class,
         'production' => \App\Http\Middleware\Production::class,
+        'admin' => \App\Http\Middleware\Admin::class,
 
     ];
 }

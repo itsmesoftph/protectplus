@@ -57,8 +57,9 @@
                     <td class="text-right">
 
                         <form action="{{ route('cart.update', $item->id) }}">
+
                             <input name="order_quantity" id="quantity" type="number" value="{{ $item->quantity }}"
-                            onChange="quantityFunction()" style="width: 50px;" class="mb-2">
+                           style="width: 50px;" class="mb-2">
                             <input class="btn btn-primary" type="submit" value="save">
                             <input name="product_quantity" type="hidden" value="{{$item->associatedModel->quantity}}">
                             <a href="{{ route('cart.destroy', $item->id) }}" class="align-middle">

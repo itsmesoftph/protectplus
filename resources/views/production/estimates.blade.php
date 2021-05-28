@@ -67,20 +67,20 @@
                                 <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="input_alcohol_computed">Amount with Specific Gravity</label>
-                                            <input type="number" class="form-control" id="alcohol_computed" name="alcohol_computed" readonly>
+                                            <input type="number" class="form-control" id="alcohol_computed" name="alcohol_computed" readonly required>
                                         </div>
                                 </div>
                                 <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="input_scent">Scent</label>
-                                            <input type="number" class="form-control" id="scent_computed" name="scent_computed" readonly>
+                                            <input type="number" class="form-control" id="scent_computed" name="scent_computed" readonly required>
                                         </div>
                                 </div>
 
                                 <div class="form-row">
                                         <div class="form-group col-md-12">
                                             <label for="input_water">Water</label>
-                                            <input type="number" class="form-control" id="water_computed" name="water_computed" readonly>
+                                            <input type="number" class="form-control" id="water_computed" name="water_computed" readonly required>
                                         </div>
                                 </div>
 

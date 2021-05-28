@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Inventory;
 use DB;
-use Carbon\Carbon;
-use App\Product;
-use App\OrderItem;
 use App\Order;
+use App\Product;
+use App\Estimate;
+use App\Inventory;
+use App\OrderItem;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Yajra\Datatables\Datatables;
 
@@ -277,6 +278,15 @@ class OverviewController extends Controller
         ->whereDate('created_at',$date)
         ->get();
 
+
+        $isoEstimates = Estimate::where('mat_name','=','Iso')
+        ->whereDate('created_at','=',$date)
+        ->get();
+
+        $ethylEstimates = Estimate::where('mat_name','=','Ethyl')
+        ->whereDate('created_at','=',$date)
+        ->get();
+
         // $invQuantity = DB::table('inventory')
         // ->select('*')
         // ->whereDate('created_at',$date)
@@ -302,13 +312,14 @@ class OverviewController extends Controller
             }
 
             return datatables()->of($data)->make(true);
-           }
+        }
 
 
            return view('overview.overview',[
 
 
-            'estimates' => $estimates,
+            'isoEstimates' => $isoEstimates,
+            'ethylEstimates' => $ethylEstimates,
             'productsEstimates' => $productsEstimates,
             'invQuantity'=> $invQuantity,
 
@@ -385,5 +396,178 @@ class OverviewController extends Controller
             // $order_number = $orders->sortBy('order_number')->pluck( 'order_number')->unique();
 
             // return  response()->json(['status'=> 'status', 'order_number' => 'order_number']);
+        }
+
+        public function production(){
+
+              //  FORMAT CURRENT DATE
+                $date = Carbon::now();
+                $date->toDateTimeString();
+
+            $isoEstimates = Estimate::where('mat_name','=','Iso')
+            ->whereDate('created_at','=',$date)
+            ->get();
+
+            $ethylEstimates = Estimate::where('mat_name','=','Ethyl')
+            ->whereDate('created_at','=',$date)
+            ->get();
+
+            // $invQuantity = DB::table('inventory')
+            // ->select('*')
+            // ->whereDate('created_at',$date)
+            // ->get();
+            $invQuantity = Product::join('inventory','products.id','=','inventory.product_id')
+            ->whereDate('inventory.created_at', $date)
+            ->get(['products.*','inventory.new_qty']);
+
+            return view('overview.production_estimates',[
+                'isoEstimates'      => $isoEstimates,
+                'ethylEstimates'    => $ethylEstimates,
+                'invQuantity'       =>$invQuantity
+
+            ]);
+        }
+
+        public function salesSummary(Request $request){
+
+        $name_MostOrdered = [];
+        $id= '';
+        // GET ID of most ordered product
+        $mostOrdered = DB::table('order_items')
+        ->select( 'product_id')
+        ->groupBy('product_id')
+        ->orderByRaw('COUNT(*) DESC')
+        ->limit(1)
+        ->get();
+
+        // GET Name of the most ordered item
+        foreach( $mostOrdered as $order){
+            $name_MostOrdered = DB::table('products')
+            ->where('id', $order->product_id)
+            ->get();
+        }
+
+        // GET ID of most ordered item
+        foreach($name_MostOrdered as $product){
+           $id = $product->id;
+        }
+
+            $NumberOfMostOrderedProduct = '';
+        if($id){
+
+            $NumberOfMostOrderedProduct=OrderItem::where('product_id',$id)->count();
+
+        }
+
+
+
+        //  FORMAT CURRENT DATE
+        $date = Carbon::now();
+        $date->toDateTimeString();
+
+        // GET ALL PRODUCTS
+        $products = DB::table('products')
+        ->paginate(15);
+
+
+            $paidStatus = DB::table('orders')
+            ->select("*")
+            ->get();
+
+          $orders = DB::table('orders')->get();
+          $orders = Order::all();
+          $countAllOrders = count($orders);
+
+          $distributor = DB::table('users')->where('role_id', 2)->get();
+          $countDistributor = count($distributor);
+
+          // dd($request->from_date);
+
+
+
+
+             //  FORMAT CURRENT DATE
+             $from_date = Carbon::parse($request->input('from_date'));
+             $from_date->toDateTimeString();
+
+             $to_date = Carbon::parse($request->input('to_date'));
+             $to_date->toDateTimeString();
+
+
+            if(request()->ajax())  {
+
+                if(!empty($request->from_date)){
+                 $data = DB::table('orders')
+                   ->whereBetween('created_at', [$from_date, $to_date])
+                   ->get();
+
+                } else  {
+                 $data = DB::table('orders')
+                   ->get();
+                }
+
+                return datatables()->of($data)->make(true);
+            }
+
+
+               return view('overview.sales_summary',[
+
+
+                // 'isoEstimates' => $isoEstimates,
+                // 'ethylEstimates' => $ethylEstimates,
+                // 'productsEstimates' => $productsEstimates,
+                // 'invQuantity'=> $invQuantity,
+
+
+
+                        // 'countOrders'=>$countOrders,
+                // 'totalSales'=>$totalSales,
+                // 'numberOfOrder' => $numberOfOrder,
+                // 'numberOfApproved'=> $numberOfApproved,
+                // 'numberOfDRcreated'=>$numberOfDRcreated,
+                // 'numberOfPaidOrder'=>$numberOfPaidOrder,
+                // 'numberOfReleasedOrder'=>$numberOfReleasedOrder,
+                // 'numberOfReceievedOrder'=>$numberOfReceievedOrder,
+                // 'getAllDeliveryFee'=>$getAllDeliveryFee,
+
+
+                // 'paidStatus'=>$paidStatus,
+
+
+                // 'numberOfunpproved'=>$numberOfunpproved,
+                // 'numberOf_ForDrCreation'=>$numberOf_ForDrCreation,
+                // 'numberOf_AccountReceivable'=>$numberOf_AccountReceivable,
+                // 'numberOf_PendingRelease'=>$numberOf_PendingRelease,
+                // 'numberOf_InTransit'=>$numberOf_InTransit,
+
+
+                // 'getAllApproved'=>$getAllApproved,
+                // 'getAllDRcreated'=>$getAllDRcreated,
+                // 'getAllPaidOrder'=>$getAllPaidOrder,
+
+                // 'getAllRealeasedOrder'=>$getAllRealeasedOrder,
+                // 'getAllRecievedOrder'=>$getAllRecievedOrder,
+
+                // 'countDistributor' => $countDistributor,
+                // 'DrOrders' => $DrOrders,
+
+                'products' => $products,
+
+                // 'GrandTotalSales' => $GrandTotalSales,
+                // 'paidOrders' => $paidOrders,
+                'name_MostOrdered' => $name_MostOrdered,
+                'NumberOfMostOrderedProduct' => $NumberOfMostOrderedProduct,
+                // 'DrOrders' => $DrOrders,
+                // 'releasedOrders' => $releasedOrders,
+                // 'processingOrders' => $processingOrders
+               ]);
+
+
+
+
+        }
+
+        public function getEstimator(){
+            return view('overview.mat_estimator');
         }
 }

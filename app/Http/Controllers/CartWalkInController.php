@@ -14,7 +14,12 @@ class CartWalkInController extends Controller
     public function index(){
 
             $cartItems = \Cart::session(auth()->id())->getContent();
+
+
+            // dd($cartItems);
+
             return view( 'walkin.walkin_cart', ['cartItems'=> $cartItems]);
+
 
     }
 
@@ -41,10 +46,9 @@ class CartWalkInController extends Controller
 
 
     public function destroy($itemId){
-
         //  remove cart item
        \Cart::session(auth()->id())->remove($itemId);
-        return back();
+        return redirect()->back();
     }
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Product as Product;
 use Illuminate\Http\Request;
 use TCG\Voyager\Facades\Voyager;
+use DB;
 
 class HomeController extends Controller
 {
@@ -24,29 +25,29 @@ class HomeController extends Controller
      * @return \Illuminate\Contracts\Support\Renderable
      */
     public function index()
-    {   
-        
+    {
+
         $getProduct = Product::all();
         $products = Product::take(20)->get();
 
+        $featured_product = DB::table('products')
+        ->where('is_featured','!=','no')
+        ->get();
+
+        $firstFeaturedProduct = DB::table('products')
+        ->where('is_featured','!=','no')->first();
+
+        return view('home2',[
+            'products' => $products,
+            'featured_products'=>$featured_product,
+            'firstFeaturedProduct' => $firstFeaturedProduct
+        ]);
 
 
-        // foreach($getProduct as $product){
-        //     var_dump(Voyager::setting('site.stock_threshold'));
-            
-        //         if($product->quantity > (Voyager::setting('site.stock_threshold'))){
-        //             $stockLevel = 'In Stock'; 
-        //         } else {
-        //             // dd($product->quantity);
-        //             var_dump($product->quantity);
-        //             $stockLevel = 'Low'; 
-        //         }
-      
-        // }
 
-        return view('home',[
-            'products' => $products
-            // 'stockLevel' => $stockLevel
-            ]);
+    }
+
+    public function help(){
+        return view('help.index');
     }
 }

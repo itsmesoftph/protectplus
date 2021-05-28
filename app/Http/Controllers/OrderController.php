@@ -7,6 +7,8 @@ use App\Order;
 use App\Product;
 use Illuminate\Http\Request;
 
+use function PHPUnit\Framework\isEmpty;
+
 class OrderController extends Controller
 {
     /**
@@ -38,6 +40,14 @@ class OrderController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
+
+        // dd($request->input('payment_method'));
+
+
+        if($request->input('payment_method') == null){
+            return back()->with('toast_error','Please choose payment method');
+        }
+
         $request->validate([
             'shipping_fullname' => 'required',
             'shipping_address'  => 'required',
@@ -67,7 +77,8 @@ class OrderController extends Controller
 
 
         // PROCESS STAGE
-        // dd($request);
+
+
 
 
 
@@ -116,12 +127,13 @@ class OrderController extends Controller
                     $order->status = $request->input('status');
 
                 } else {
-                    return redirect()->route('cart.checkout')->withError('Please upload an image of your ' .strtoupper($request->payment_method) . ' payment');
+                    return redirect()->route('cart.checkout')->with('toast_error','Please upload an image of your ' .strtoupper($request->payment_method) . ' payment');
                 }
             }
 
 
         }
+
 
 
         if($request->order_from_walkin){
@@ -170,10 +182,12 @@ class OrderController extends Controller
 
         //take user to thank you page
         if($request->order_from_walkin){
-            return redirect()->route('walkin')->with('toast_success','Order has been placed');
+            // return redirect()->route('walkin')->with('toast_success','Order has been placed');
+            return view('cart.confirm');
 
         }else{
-            return redirect()->route('home')->with('toast_success','Order has been placed');
+            // return redirect()->route('home')->with('toast_success','Order has been placed');
+            return view('cart.confirm');
 
         }
 

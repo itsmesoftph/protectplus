@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.sales')
 
 
 @section('content')
@@ -12,8 +12,6 @@
         <div class="col text-center">
             <a class="btn btn-primary" href="{{ route('home') }}" role="button">Add Item</a>
         </div>
-
-
 
     </div>
 

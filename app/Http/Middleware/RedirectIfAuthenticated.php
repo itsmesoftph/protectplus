@@ -42,7 +42,7 @@ class RedirectIfAuthenticated
                     break;
 
                     case 'Sales':
-                    return redirect('sales');
+                    return redirect('sales/dashboard');
                     break;
 
                     case 'Production':
